@@ -63,7 +63,7 @@ def baselineSolution(testnum):
                 takenBranch = branch
         if(takenBranch != -1):
             startSlot, counter = takeSlot(takenBranch, service)
-            solution[i] = ((i+1, takenBranch, startSlot, counter))
+            solution[i] = ((i + 1, takenBranch + 1, startSlot + 1, counter))
             matches += 1
     
     print(matches)
