@@ -7,26 +7,26 @@ np.random.seed(5)
 
 number_of_tests = 20
 
-minimum_number_of_branches = 2
-maximum_number_of_branches = 50
+minimum_number_of_branches = 1
+maximum_number_of_branches = 3
 
-minimum_number_of_requests = 10
-maximum_number_of_requests = 10000
+minimum_number_of_requests = 1
+maximum_number_of_requests = 5
 
-minimum_number_of_services = 2
-maximum_number_of_services = 50
+minimum_number_of_services = 4
+maximum_number_of_services = 5
 
 minimum_maximum_distance = 100
 maximum_maximum_distance = 10000
 
 min_no_of_slots_for_one_service = 1
-max_no_of_slots_for_one_service = 5
+max_no_of_slots_for_one_service = 3
 
-min_no_of_counters_at_branch = 5
-max_no_of_counters_at_branch = 50
+min_no_of_counters_at_branch = 4
+max_no_of_counters_at_branch = 5
 
-min_no_of_slots_per_day = 8
-max_no_of_slots_per_day = 32
+min_no_of_slots_per_day = 4
+max_no_of_slots_per_day = 5
 
 # Assuming the whole area is square in shape, the diagonal is the distance from (0,0) to the farthest possible point,
 # The diagonal is calculated as a ration of d for each test
@@ -73,7 +73,7 @@ def generate():
     ### Generating test by test ###
     for test_num in range(0, number_of_tests):
 
-        path = "./testset_1/" + "/test_" + str(test_num) + ".in"
+        path = "./testset_2/" + "/test_" + str(test_num) + ".in"
         f = open(path, "w+")
 
         b = list_of_b[test_num]
