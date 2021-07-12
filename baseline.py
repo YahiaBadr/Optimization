@@ -49,7 +49,7 @@ def baselineSolution(testnum):
 
     sorted_requests = []
     for i in range(r):
-        sorted_requests.append({'service': int(rs[i]), 'priority': p[i]})
+        sorted_requests.append({'indx': i, 'service': int(rs[i]), 'priority': p[i]})
 
     sorted_requests.sort(key=sortPair)
 
@@ -57,14 +57,15 @@ def baselineSolution(testnum):
     matches = 0
     for i in range(r):
         service = sorted_requests[i]['service']
+        indx = sorted_requests[i]['indx']
         minDist = sys.maxsize
         takenBranch = -1
         for branch in range(b):
-            if(minDist > dist[i][branch] and dist[i][branch] <= d and isSlotAvailable(branch, service)):
+            if(minDist > dist[indx][branch] and dist[indx][branch] <= d and isSlotAvailable(branch, service)):
                 takenBranch = branch
         if(takenBranch != -1):
             startSlot, counter = takeSlot(takenBranch, service)
-            solution[i] = ((i + 1, takenBranch + 1, startSlot + 1, counter))
+            solution[indx] = ((indx + 1, takenBranch + 1, startSlot + 1, counter, service))
             matches += 1
 
     return matches, solution
@@ -88,6 +89,6 @@ for filename in sorted(os.listdir("./"+folderName), key = lambda x: int(x.split(
     output.write(str(matches)+"\n")
     for i in range(len(solution)):
         if(solution[i] != -1):
-            (i, takenBranch, startSlot, counter) = solution[i]
+            (i, takenBranch, startSlot, counter, service) = solution[i]
             output.write(str(i) + " " + str(takenBranch) + " " + str(startSlot) + " " + str(counter) + "\n")
     print(filename+' Done')
