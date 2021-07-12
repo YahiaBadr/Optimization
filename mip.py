@@ -1,3 +1,6 @@
+from opentest import open_test
+import os
+import sys
 import numpy as np
 from ortools.linear_solver import pywraplp
 
@@ -5,80 +8,8 @@ alpha = 1
 beta = 1
 gamma = 1
 
-
-def open_test(testnum):
-
-    path = "./testset_" + str(1) + "/test_" + str(testnum) + ".in"
-
-    f = open(path, "r")
-    line = f.readline().split(" ")
-    b = int(line[0])
-    r = int(line[1])
-    m = int(line[2])
-    d = int(line[3])
-    slots = np.zeros([m, b])
-
-    for z in range(m):
-        line = f.readline().split(" ")
-        for j in range(b):
-            slots[z][j] = int(line[j])
-
-    r_locations = np.zeros([r, 2])
-    rs = np.zeros(r)
-    p = np.zeros(r)
-
-    for i in range(r):
-        line = f.readline().split(" ")
-        xi = int(line[0])
-        yi = int(line[1])
-        pi = int(line[2])
-        rsi = int(line[3])
-        r_locations[i] = [xi, yi]
-        p[i] = pi
-        rs[i] = rsi
-
-    b_locations = np.zeros([b, 2])
-    s = np.zeros(b)
-    cap = np.zeros(b)
-    serves = []
-
-    for i in range(b):
-        line = f.readline().split(" ")
-        xi = int(line[0])
-        yi = int(line[1])
-        si = int(line[2])
-        capi = int(line[3])
-        b_locations[i] = [xi, yi]
-        s[i] = si
-        cap[i] = capi
-        serves.append([])
-        for j in range(capi):
-            line = f.readline().split(" ")
-            n = int(line[0])
-            set_of_served = set()
-            serves[i].append([])
-            for k in range(n):
-                set_of_served.add(int(line[k+1]))
-            for z in range(m):
-                if z in set_of_served:
-                    serves[i][j].append(1)
-                else:
-                    serves[i][j].append(0)
-
-    dist = distances(r_locations, b_locations)
-    return b, s, r, m, cap, rs, slots, dist, p, serves, d
-
-
-def distances(r_positions, b_positions):
-    r = len(r_positions)
-    b = len(b_positions)
-    dist = np.zeros([r, b])
-    for i in range(r):
-        for j in range(b):
-            dist[i][j] = np.linalg.norm(r_positions[i] - b_positions[j])
-    return dist
-
-def MIP_solver(b, s, r, m, cap, rs, slots, dist, p, serves, d):
+def MIP_solver(path):
+    b, s, r, m, cap, rs, slots, dist, p, serves, d = open_test(path)
     solver = pywraplp.Solver.CreateSolver('SCIP')
     x = []
     M = solver.infinity()
@@ -160,3 +91,25 @@ def MIP_solver(b, s, r, m, cap, rs, slots, dist, p, serves, d):
                     matchings += x[i][j][k][w].solution_value()
 
     return Z, sol, matchings/r
+
+folderName = sys.argv[1]
+try:
+    os.mkdir(folderName+"_output")
+except FileExistsError:
+    nothing = ''
+try:
+    os.mkdir(folderName+"_output/MIP")
+except FileExistsError:
+    nothing = ''
+for filename in sorted(os.listdir("./"+folderName), key = lambda x: int(x.split("_")[1].split(".")[0])):
+    testnum = int(filename[5:len(filename)-3])
+    path = "./" + folderName + "/" + filename
+    Z, sol, matchings = MIP_solver(path)
+    print(Z, sol, matchings)
+    # output = open(folderName+"_output/MIP/"+filename[:len(filename)-3]+".out", "w")
+    # output.write(str(matches)+"\n")
+    # for i in range(len(solution)):
+    #     if(solution[i] != -1):
+    #         (i, takenBranch, startSlot, counter, service) = solution[i]
+    #         output.write(str(i) + " " + str(takenBranch) + " " + str(startSlot) + " " + str(counter) + "\n")
+    print(filename+' Done')
