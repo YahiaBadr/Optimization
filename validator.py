@@ -23,7 +23,7 @@ if __name__ == '__main__':
     test_num = int(test_file.split("_")[1].split(".")[0])
     
     #Read input
-    b, s, r, m, cap, rs, slots, dist, p, serves, d = opentest.open_test(test_num)
+    b, s, r, m, cap, rs, slots, dist, p, serves, d = opentest.open_test(input_dir+"/"+test_file)
     
     #Read output and make sure it's in the right format
     if not os.path.isfile(output_dir + "test_" + str(test_num) + ".out"):
