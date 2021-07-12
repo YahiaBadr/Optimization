@@ -9,7 +9,7 @@ def baselineSolution(testnum):
 
         
     def isSlotAvailable(branch, service):
-        slotsNeeded = int(slots[service - 1][branch])
+        slotsNeeded = int(slots[service][branch])
         for i in range(int(s[branch])):
             if( i + slotsNeeded >= s[branch]):
                 break
@@ -18,13 +18,13 @@ def baselineSolution(testnum):
                 intersection = list(set(intersection) & set(branchSolts[branch][i + j]))
             if(len(intersection) > 0):
                 for counter in intersection:
-                    if(serves[branch][counter - 1][service - 1] == 1):
+                    if(serves[branch][counter - 1][service] == 1):
                         return True
         return False
 
 
     def takeSlot(branch, service):
-        slotsNeeded = int(slots[service - 1][branch])
+        slotsNeeded = int(slots[service][branch])
         for i in range(int(s[branch])):
             if( i + slotsNeeded >= s[branch]):
                 break
@@ -33,7 +33,7 @@ def baselineSolution(testnum):
                 intersection = list(set(intersection) & set(branchSolts[branch][i + j]))
             if(len(intersection) > 0):
                 for counter in intersection:
-                    if(serves[branch][counter - 1][service - 1] == 1):
+                    if(serves[branch][counter - 1][service] == 1):
                         for j in range(slotsNeeded):
                             branchSolts[branch][i + j].pop(branchSolts[branch][i + j].index(counter))
                         return i, counter
