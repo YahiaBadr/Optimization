@@ -71,7 +71,7 @@ def baselineSolution(testnum):
 
 
 
-folderName = "testset_2"
+folderName = sys.argv[1]
 try:
     os.mkdir(folderName+"_output")
 except FileExistsError:
