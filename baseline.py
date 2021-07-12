@@ -82,8 +82,8 @@ except FileExistsError:
     nothing = ''
 for filename in sorted(os.listdir("./"+folderName), key = lambda x: int(x.split("_")[1].split(".")[0])):
     testnum = int(filename[5:len(filename)-3])
-    path = "./" + folderName + filename
-    matches, solution = baselineSolution(testnum)
+    path = "./" + folderName + "/" + filename
+    matches, solution = baselineSolution(path)
     output = open(folderName+"_output/Baseline/"+filename[:len(filename)-3]+".out", "w")
     output.write(str(matches)+"\n")
     for i in range(len(solution)):
