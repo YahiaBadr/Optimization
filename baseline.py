@@ -1,3 +1,4 @@
+import os
 import sys
 import opentest
 
@@ -65,14 +66,22 @@ def baselineSolution(testnum):
             startSlot, counter = takeSlot(takenBranch, service)
             solution[i] = ((i + 1, takenBranch + 1, startSlot + 1, counter))
             matches += 1
-    
-    print(matches)
-    for i in range(r):
+
+    return matches, solution
+
+
+
+folderName = "testset_1"
+try:
+    os.mkdir(folderName+"_output/Baseline")
+except FileExistsError:
+    nothing = ''
+for filename in sorted(os.listdir("./"+folderName), key = lambda x: int(x.split("_")[1].split(".")[0])):
+    testnum = int(filename[5:len(filename)-3])
+    matches, solution = baselineSolution(testnum)
+    output = open(folderName+"_output/Baseline/"+filename[:len(filename)-3]+".out", "w")
+    output.write(str(matches))
+    for i in range(len(solution)):
         if(solution[i] != -1):
             (i, takenBranch, startSlot, counter) = solution[i]
-            print(i, takenBranch, startSlot, counter)
-
-    return solution
-
-
-baselineSolution(0)
+            output.write(str(i) + " " + str(takenBranch) + " " + str(startSlot) + " " + str(counter))
