@@ -5,8 +5,8 @@ import sys
 def read_ints(s):
     return [int(i) for i in s.split(' ')]
 
-def read_output(test_num):
-  path = "./testset_" + str(1) + "_output" + "/test_" + str(test_num) + ".out"
+def read_output(output_dir, test_num):
+  path = output_dir + "/test_" + str(test_num) + ".out"
   f = open(path, "r")
   matchings = int(f.readline()[0])
   output = []
@@ -30,7 +30,7 @@ if __name__ == '__main__':
       print('Missing test: '+ str(test_num))
       missing_tests += 1
       continue
-    matchings, output = read_output(test_num)
+    matchings, output = read_output(output_dir, test_num)
 
     if len(output) != matchings:
       print('Error in test '+str(test_num)+"invalid number of matchings")
@@ -40,26 +40,36 @@ if __name__ == '__main__':
     #Apply constraints on output
     
     #Domain constraint  
-    error = False
-    falsy_matches = []
     for matching in output:
       request = matching[0]
       branch = matching[1]
       slot = matching[2]
       counter = matching[3]
       
-      if not (request >= 1 and request <= r \
-        and branch >=1 and branch <= b \
-        and slot >= 1 and slot <= s[branch - 1] \
-        and counter >= 1 and counter <= cap[branch - 1] \
-        and dist[request-1][branch-1] <= d \
-        and serves[branch - 1][counter - 1][int(rs[request -1 ])] == 1 \
-        and slots[int(rs[request - 1])][branch - 1] + slot -1 <= s[branch - 1]) :
-            falsy_matches.append(request)
-            error = True
-            break
-    if error: 
-      print('Error in test '+str(test_num)+" invalid variable domain in matching request no." + str(falsy_matches))
+      if not(request >= 1 and request <= r):
+        print('Error in test '+str(test_num)+" Matching request no. "+ str(request)+" request number is out of range!")
+        continue
+      
+      if not( branch >=1 and branch <= b):
+        print('Error in test '+str(test_num)+" Matching request no. "+ str(request)+" branch number is out of range!")
+        continue
+      
+      if not(counter >= 1 and counter <= cap[branch - 1]):
+        print('Error in test '+str(test_num)+" Matching request no. "+ str(request)+" counter number does not exist in this branch")
+        continue
+      
+      if not(dist[request-1][branch-1] <= d):
+        print('Error in test '+str(test_num)+ " Matching request no. "+ str(request)+ " exceeds the max distance")
+        continue
+      
+      if not(serves[branch - 1][counter - 1][int(rs[request -1 ])] == 1):
+        print('Error in test '+str(test_num)+ " Matching request no. "+ str(request)+ " the counter in the branch does not serve the matched service")
+        continue
+      
+      if not(slots[int(rs[request - 1])][branch - 1] + slot -1 <= s[branch - 1]) :
+        print('Error in test '+str(test_num)+ " Matching request no. "+ str(request)+ " slots needed for matching exceed working hours")
+        continue
+      
     #Each customer is handled at most once
     requests = [row[0] for row in output]
     branches = [row[1] for row in output]
