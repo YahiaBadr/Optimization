@@ -71,13 +71,18 @@ def baselineSolution(testnum):
 
 
 
-folderName = "testset_1"
+folderName = "testset_2"
+try:
+    os.mkdir(folderName+"_output")
+except FileExistsError:
+    nothing = ''
 try:
     os.mkdir(folderName+"_output/Baseline")
 except FileExistsError:
     nothing = ''
 for filename in sorted(os.listdir("./"+folderName), key = lambda x: int(x.split("_")[1].split(".")[0])):
     testnum = int(filename[5:len(filename)-3])
+    path = "./" + folderName + filename
     matches, solution = baselineSolution(testnum)
     output = open(folderName+"_output/Baseline/"+filename[:len(filename)-3]+".out", "w")
     output.write(str(matches)+"\n")
