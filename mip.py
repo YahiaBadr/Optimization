@@ -105,10 +105,12 @@ for filename in sorted(os.listdir("./"+folderName), key = lambda x: int(x.split(
     testnum = int(filename[5:len(filename)-3])
     path = "./" + folderName + "/" + filename
     Z, sol, matchings = MIP_solver(path)
-    print(Z, sol, matchings)
-    # output = open(folderName+"_output/MIP/"+filename[:len(filename)-3]+".out", "w")
-    # output.write(str(matches)+"\n")
-    # for i in range(len(solution)):
+    output = open(folderName+"_output/MIP/"+filename[:len(filename)-3]+".out", "w")
+    output.write(str(int(matchings))+"\n")
+    for x in sol:
+        for y in x:
+            for z in y:
+                print(z)
     #     if(solution[i] != -1):
     #         (i, takenBranch, startSlot, counter, service) = solution[i]
     #         output.write(str(i) + " " + str(takenBranch) + " " + str(startSlot) + " " + str(counter) + "\n")
