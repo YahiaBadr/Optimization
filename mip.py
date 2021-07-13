@@ -111,7 +111,5 @@ for filename in sorted(os.listdir("./"+folderName), key = lambda x: int(x.split(
         for y in x:
             for z in y:
                 print(z)
-    #     if(solution[i] != -1):
-    #         (i, takenBranch, startSlot, counter, service) = solution[i]
     #         output.write(str(i) + " " + str(takenBranch) + " " + str(startSlot) + " " + str(counter) + "\n")
     print(filename+' Done')
