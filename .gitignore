@@ -3,8 +3,6 @@ __pycache__/opentest.cpython-37.pyc
 __pycache__/
 
 test
-test/*
 test_output
-test_output/*
 
 
