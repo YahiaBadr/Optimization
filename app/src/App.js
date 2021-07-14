@@ -118,7 +118,7 @@ function App() {
 					</h3>
 				</>
 			)}
-			{[...Array(numberOfBranches)].map((e, i) => {
+			{numberOfBranches > 0 && [...Array(numberOfBranches)].map((e, i) => {
 				return (
 					<>
 						<form
@@ -154,7 +154,7 @@ function App() {
 					</h3>
 				</>
 			)}
-			{[...Array(numberOfRequests)].map((e, i) => {
+			{numberOfRequests > 0 && [...Array(numberOfRequests)].map((e, i) => {
 				return (
 					<>
 						<form
@@ -199,7 +199,7 @@ function App() {
 					</h3>
 				</>
 			)}
-			{[...Array(numberOfBranches)].map((e, i) => {
+			{numberOfBranches > 0 && [...Array(numberOfBranches)].map((e, i) => {
 				return (
 					<>
 						<form
