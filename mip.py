@@ -5,14 +5,15 @@ import numpy as np
 from ortools.linear_solver import pywraplp
 
 alpha = 1
-beta = 1
-gamma = 1
+beta = 0
+gamma = 0
 
-def MIP_solver(path):
+
+def MIPSolution(path):
     b, s, r, m, cap, rs, slots, dist, p, serves, d = open_test(path)
     solver = pywraplp.Solver.CreateSolver('SCIP')
     x = []
-    M = solver.infinity()
+    M = 1
     s = np.array(s, dtype='int64')
     cap = np.array(cap, dtype='int64')
     rs = np.array(rs, dtype='int64')
@@ -28,7 +29,7 @@ def MIP_solver(path):
                 for w in range(cap[j]):
                     domain_constraint = 1
 
-                    #constraint 1
+                    # constraint 1
                     if not (serves[j][w][rs[i]] == 1
                             and ((slots[rs[i]][j] + k) <= s[j])
                             and dist[i][j] <= d):
@@ -37,7 +38,6 @@ def MIP_solver(path):
 
                     x[i][j][k].append(solver.IntVar(0, 1 * domain_constraint,
                                                     'x' + str(i) + "-" + str(j) + "-" + str(k) + '-' + str(w)))
-
 
     ## constraint 2 ###
     for i in range(r):
@@ -55,12 +55,12 @@ def MIP_solver(path):
             for k in range(s[j]):
                 for w in range(cap[j]):
                     for i2 in range(r):
-                        if i2 == i:
+                        if i2 == i or k + slots[rs[i]][j] > s[j]:
                             continue
-                        for k2 in range(k, k + slots[rs[i]][j]-3):
-                            solver.Add(x[i][j][k][w] <= M * (1-x[i2][j][k2][w]))
-    ### end of constraint 3
-
+                        for k2 in range(k, k + slots[rs[i]][j]):
+                            solver.Add(x[i][j][k][w] <= M *
+                                       (1-x[i2][j][k2][w]))
+    # end of constraint 3
 
     ### objective function ###
     F0 = 0
@@ -77,39 +77,38 @@ def MIP_solver(path):
     objective_eqn = (alpha*F0) + (beta*F1) - (gamma*F2)
     solver.Maximize(objective_eqn)
     solver.Solve()
-    Z = solver.Objective().Value()
-    sol = []
-    matchings = 0
-    for i in range(len(x)):
-        sol.append([])
-        for j in range(len(x[i])):
-            sol[i].append([])
-            for k in range(len(x[i][j])):
-                sol[i][j].append([])
-                for w in range(len(x[i][j][k])):
-                    sol[i][j][k].append(x[i][j][k][w].solution_value())
-                    matchings += x[i][j][k][w].solution_value()
+    score = solver.Objective().Value()
+    solution = []
+    for i in range(r):
+        for j in range(b):
+            for k in range(s[j]):
+                for w in range(cap[j]):
+                    if x[i][j][k][w].solution_value() == 1:
+                        solution.append((i+1, j+1, k+1, w+1))
 
-    return Z, sol, matchings/r
+    return score, solution
 
-folderName = sys.argv[1]
-try:
-    os.mkdir(folderName+"_output")
-except FileExistsError:
-    nothing = ''
-try:
-    os.mkdir(folderName+"_output/MIP")
-except FileExistsError:
-    nothing = ''
-for filename in sorted(os.listdir("./"+folderName), key = lambda x: int(x.split("_")[1].split(".")[0])):
-    testnum = int(filename[5:len(filename)-3])
-    path = "./" + folderName + "/" + filename
-    Z, sol, matchings = MIP_solver(path)
-    output = open(folderName+"_output/MIP/"+filename[:len(filename)-3]+".out", "w")
-    output.write(str(int(matchings))+"\n")
-    for x in sol:
-        for y in x:
-            for z in y:
-                print(z)
-    #         output.write(str(i) + " " + str(takenBranch) + " " + str(startSlot) + " " + str(counter) + "\n")
-    print(filename+' Done')
+
+if __name__ == '__main__':
+    folderName = sys.argv[1]
+    try:
+        os.mkdir(folderName+"_output")
+    except FileExistsError:
+        nothing = ''
+    try:
+        os.mkdir(folderName+"_output/MIP")
+    except FileExistsError:
+        nothing = ''
+    for filename in sorted(os.listdir("./"+folderName), key=lambda x: int(x.split("_")[1].split(".")[0])):
+        testnum = int(filename[5:len(filename)-3])
+        path = "./" + folderName + "/" + filename
+        matches, solution = MIPSolution(path)
+        output = open(folderName+"_output/MIP/" +
+                      filename[:len(filename)-3]+".out", "w")
+        output.write(str(matches)+"\n")
+        for i in range(len(solution)):
+            if(solution[i] != -1):
+                (i, takenBranch, startSlot, counter) = solution[i]
+                output.write(str(i) + " " + str(takenBranch) +
+                             " " + str(startSlot) + " " + str(counter) + "\n")
+        print(filename+' Done')
