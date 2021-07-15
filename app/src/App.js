@@ -4,6 +4,7 @@ import { Button } from "react-bootstrap";
 import { makeStyles } from "@material-ui/core/styles";
 import { TextField } from "@material-ui/core";
 import { useCallback, useMemo, useState } from "react";
+import axios from 'axios';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -111,11 +112,10 @@ function App() {
     }
     return stringInput
   },[numberOfBranches, numberOfRequests, numberOfServices, timeNeeded, requestsInfo, branchesInfo, countersCount, countersInfo, maxDistance])
-  const handleRun = useCallback((algo) => {
+  const handleRun = useCallback( async (algo) => {
     const stringInput = generateString;
-    console.log(algo)
-    console.log(stringInput)
-    const outputRecieved = `3\n1 2 1 3\n2 2 2 3\n3 2 1 2`
+    const res = await axios.post(`http://localhost:5000/${algo}`, {data: stringInput})
+    const outputRecieved = res.data
     let array = outputRecieved.split("\n");
     setMatches(array[0])
     setOutput(array.slice(1))
@@ -285,8 +285,8 @@ function App() {
 									return (
 										<>
 											<TextField
-												id={`branch-${i}-info-${j}`}
-												key={`branch-${i}-info-${j}`}
+												id={`branch-${i}-counters-${j}`}
+												key={`branch-${i}-counters-${j}`}
 												label={`Counter ${i + 1} Services No.`}
 												variant="filled"
 												size="small"
@@ -299,8 +299,8 @@ function App() {
 												[...Array(countersCount[`${i}${j}`])].map((e, k) => {
 													return (
 														<TextField
-															id={`branch-${i}-info-${j}`}
-															key={`branch-${i}-info-${j}`}
+															id={`counter-${i}-info-${j}`}
+															key={`counter-${i}-info-${j}`}
 															label={`Services ${k + 1}`}
 															variant="filled"
 															size="small"
@@ -322,7 +322,7 @@ function App() {
 			})}
 			<Button onClick={() => handleRun("baseline")} variant="primary">Baseline</Button>{" "}
 			<Button onClick={() => handleRun("mip")} variant="secondary">MIP</Button>{" "}
-			<Button onClick={() => handleRun("meta-heuristic")} variant="success">Meta Heuristic</Button>{" "}
+			<Button onClick={() => handleRun("meta")} variant="success">Meta Heuristic</Button>{" "}
 			<Button onClick={() => handleRun("dp")} variant="danger">DP</Button>
       <hr/>
       <h3 style={{ fontWeight: "normal", fontSize: "22px" }}>
@@ -333,7 +333,7 @@ function App() {
       </h3>
       {
         output.map((match, i) =>
-        <h3 style={{ fontWeight: "normal", fontSize: "18px" }}>
+        <h3 style={{ fontWeight: "normal", fontSize: "18px" }} key={i+" "+match}>
           {match}
         </h3>)
       }
