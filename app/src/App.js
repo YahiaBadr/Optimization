@@ -5,6 +5,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { TextField } from "@material-ui/core";
 import { useCallback, useMemo, useState } from "react";
 import axios from 'axios';
+import ResultTable from "./ResultTable";
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -331,12 +332,7 @@ function App() {
       <h3 style={{ fontWeight: "normal", fontSize: "18px" }}>
         Number of Matches: {matches}
       </h3>
-      {
-        output.map((match, i) =>
-        <h3 style={{ fontWeight: "normal", fontSize: "18px" }} key={i+" "+match}>
-          {match}
-        </h3>)
-      }
+      <ResultTable output={output}/>
 		</div>
 	);
 }
