@@ -35,9 +35,8 @@ def MIPSolution(path):
                             and dist[i][j] <= d):
                         domain_constraint = 0
                     ### end of constraint 1 ###
-
-                    x[i][j][k].append(solver.IntVar(0, 1 * domain_constraint,
-                                                    'x' + str(i) + "-" + str(j) + "-" + str(k) + '-' + str(w)))
+                    x[i][j][k].append(solver.IntVar(
+                        0, domain_constraint, 'x%i%i%i%i' % (i, j, k, w)))
     ## constraint 2 ###
     for i in range(r):
         summation = 0
@@ -123,10 +122,11 @@ def solve(path):
     except:
         matches = 0
         solution = []
-    
-    output= str(matches)+"\n"
+
+    output = str(matches)+"\n"
     for i in range(len(solution)):
         if(solution[i] != -1):
             (i, takenBranch, startSlot, counter) = solution[i]
-            output += str(i) + " " + str(takenBranch) +" " + str(startSlot) + " " + str(counter) + "\n"
+            output += str(i) + " " + str(takenBranch) + " " + \
+                str(startSlot) + " " + str(counter) + "\n"
     return output
