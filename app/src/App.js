@@ -184,7 +184,6 @@ function App() {
     }
     setResults(results)
     setFIleInput('')
-    ref.current.value = ""
   },[generateString, fileInput])
 	return (
 		<div className="App">
