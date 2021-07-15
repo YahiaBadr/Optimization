@@ -120,7 +120,7 @@ def solve(path):
     try:
         matches, solution = MIPSolution(path)
     except:
-        matches = 0
+        matches = "0"
         solution = []
 
     output = str(matches)+"\n"

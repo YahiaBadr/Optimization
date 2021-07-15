@@ -2,7 +2,7 @@
 
 
 
-from flask import Flask, request 
+from flask import Flask, request,jsonify
 from flask_cors import CORS, cross_origin
 
 import solvers
@@ -28,7 +28,7 @@ def solve_baseline():
     if request.method =='GET':
         return "This the Baseline Solution"
     req = request.get_json(force=True)
-    return solvers.solve('baseline',req['data'])
+    return jsonify(solvers.solve('baseline',req['data']))
 
 @app.route('/mip',methods=['POST','GET'])
 @cross_origin()
@@ -36,7 +36,7 @@ def solve_mip():
     if request.method =='GET':
         return "This the MIP Solution"
     req = request.get_json(force=True)
-    return solvers.solve('mip',req['data'])
+    return jsonify(solvers.solve('mip',req['data']))
     
 
 
@@ -47,7 +47,7 @@ def solve_dp():
     if request.method =='GET':
         return "This the DP Solution"
     req = request.get_json(force=True)
-    return solvers.solve('dp',req['data'])
+    return jsonify(solvers.solve('dp',req['data']))
     
 
 
@@ -57,8 +57,8 @@ def solve_meta():
     if request.method =='GET':
         return "This the Meta Solution"
     req = request.get_json(force=True)
-    solvers.solve('meta',req['data'])
-    return "meta"
+    return jsonify(solvers.solve('meta',req['data']))
+    
 
 
 
