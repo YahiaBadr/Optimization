@@ -47,10 +47,14 @@ function App() {
     for (let i = 0; i < dataStringLines.length; i++) {
       const row = dataStringLines[i].split(/,(?![^"]*"(?:(?:[^"]*"){2})*[^"]*$)/);
       for( let string of row) {
-        stringInput+= string + " "
+        if(string === "" || string === " ") continue;
+        stringInput += string + " "
+        console.log(string)
       }
+      stringInput = stringInput.substr(0, stringInput.length - 1)
       stringInput += "\n"
     }
+    console.log(stringInput)
     setFIleInput(stringInput)
   }
 
@@ -123,6 +127,8 @@ function App() {
     setCountersCount({})
     setCountersInfo({})
     setResults([])
+    setFIleInput('')
+    ref.current.value = ""
 		},
 		[]
 	);
@@ -173,6 +179,7 @@ function App() {
       results.append({matches: array[0], requests: array.slice(1)})
     }
     setResults(results)
+    setFIleInput('')
     ref.current.value = ""
   },[generateString, fileInput])
 	return (
