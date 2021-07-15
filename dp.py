@@ -55,8 +55,7 @@ def trace(i, mask):
 
     best = dp(i, mask)
     if best == dp(i+1, mask):
-        trace(i+1, mask)
-        return
+        return trace(i+1, mask)
 
     for (j, w) in cand[i]:
         for k in range(s[j]):
@@ -90,7 +89,7 @@ def dpSolution(testnum):
         cand[i] = []
         for j in range(b):
             for w in range(cap[j]):
-                if serves[j][w][rs[i]]:
+                if serves[j][w][rs[i]] and dist[i][j] <= d:
                     cand[i].append((j, w))
 
     memo = [[-1]*(1 << cnt) for _ in range(r)]
@@ -98,8 +97,7 @@ def dpSolution(testnum):
     return dp(0, 0)
 
 
-
-if __name__=='__main__':
+if __name__ == '__main__':
     folderName = sys.argv[1]
 
     try:
@@ -116,16 +114,13 @@ if __name__=='__main__':
         matches = dpSolution(path)
         solution = trace(0, 0)
         output = open(folderName+"_output/DP/" +
-                    filename[:len(filename)-3]+".out", "w")
+                      filename[:len(filename)-3]+".out", "w")
         output.write(str(matches)+"\n")
         for i in range(len(solution)):
             if(solution[i] != -1):
                 (i, takenBranch, startSlot, counter) = solution[i]
                 output.write(str(i) + " " + str(takenBranch) + " " +
-                            str(startSlot) + " " + str(counter) + "\n")
-        print(filename+' Done')
-
-
+                             str(startSlot) + " " + str(counter) + "\n")
 
 
 def solve(path):
