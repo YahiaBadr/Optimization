@@ -8,7 +8,7 @@ import dp ,baseline
 
 
 def solve(solver,goal): 
-    dir_path = 'web_output'
+    dir_path = 'web_input'
     os.makedirs(dir_path,exist_ok=True)
     
     if solver == 'dp':
