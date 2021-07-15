@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Button } from "react-bootstrap";
 import { makeStyles } from "@material-ui/core/styles";
 import { TextField } from "@material-ui/core";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -73,6 +73,47 @@ function App() {
 		},
 		[countersInfo]
 	);
+  const generateString = useMemo(() => {
+    let stringInput = numberOfBranches + " " + numberOfRequests + " " + numberOfServices + " " + maxDistance +"\n";
+    let  i = 0, j = 0;
+    while(i < numberOfServices) {
+      j = 0;
+      while(j < numberOfBranches) {
+        stringInput += timeNeeded[`${j}${i}`] + " "
+        j++;
+      }
+      stringInput += "\n"
+      i++;
+    }
+    i = 0;
+    while( i < numberOfRequests) {
+      stringInput += requestsInfo[`${i}0`] + " " + requestsInfo[`${i}1`] + " " + requestsInfo[`${i}2`] + " " + requestsInfo[`${i}3`] + "\n"
+      i++;
+    }
+    i = 0;
+    while(i < numberOfBranches) {
+      stringInput += branchesInfo[`${i}0`] + " " + branchesInfo[`${i}1`] + " " + branchesInfo[`${i}2`] + " " + branchesInfo[`${i}3`] + "\n"
+      let counterCount = branchesInfo[`${i}3`];
+      j = 0;
+      while(j < counterCount) {
+        stringInput += countersCount[`${i}${j}`]
+        let  k = 0;
+        while( k < countersCount[`${i}${j}`]) {
+          stringInput += " " + countersInfo[`${i}${j}${k}`]
+          k++;
+        }
+        stringInput += "\n"
+        j++;
+      }
+      i++;
+    }
+    return stringInput
+  },[numberOfBranches, numberOfRequests, numberOfServices, timeNeeded, requestsInfo, branchesInfo, countersCount, countersInfo, maxDistance])
+  const handleRun = useCallback((algo) => {
+    const stringInput = generateString;
+    console.log(algo)
+    console.log(stringInput)
+  },[generateString])
 	return (
 		<div className="App">
 			<h1>Balck Opt - Bank Reservation System</h1>
@@ -127,7 +168,7 @@ function App() {
 							autoComplete="off"
 							key={`branch-${i}`}
 						>
-							{[...Array(numberOfServices)].map((e, j) => {
+							{numberOfServices > 0 && [...Array(numberOfServices)].map((e, j) => {
 								return (
 									<TextField
 										id={`branch-${i}-service-${j}`}
@@ -273,10 +314,10 @@ function App() {
 					</>
 				);
 			})}
-			<Button variant="primary">Baseline</Button>{" "}
-			<Button variant="secondary">MIP</Button>{" "}
-			<Button variant="success">Meta Heuristic</Button>{" "}
-			<Button variant="danger">DP</Button>
+			<Button onClick={() => handleRun("baseline")} variant="primary">Baseline</Button>{" "}
+			<Button onClick={() => handleRun("mip")} variant="secondary">MIP</Button>{" "}
+			<Button onClick={() => handleRun("meta-heuristic")} variant="success">Meta Heuristic</Button>{" "}
+			<Button onClick={() => handleRun("dp")} variant="danger">DP</Button>
 		</div>
 	);
 }
