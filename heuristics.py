@@ -226,3 +226,15 @@ if __name__ == '__main__':
                 output.write(str(i) + " " + str(takenBranch) + " " +
                              str(startSlot) + " " + str(counter) + "\n")
         print(filename+' Done')
+
+
+def solve(path): 
+    matches, solution = HeuristicSolution(path)
+    output= str(matches)+"\n"
+    for i in range(len(solution)):
+        if(solution[i] != -1):
+            (i, takenBranch, startSlot, counter) = solution[i]
+            output+=(str(i) + " " + str(takenBranch) + " " +
+                            str(startSlot) + " " + str(counter) + "\n")
+    return output
+    

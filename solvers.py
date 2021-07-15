@@ -3,7 +3,7 @@
 
 
 import os 
-import dp ,baseline,mip
+import dp ,baseline,mip,heuristics
 
 
 
@@ -51,8 +51,16 @@ def solve(solver,goals_u):
         return output
 
     elif solver=='meta':
-        path = os.path.join(dir_path,'meta_data.in')
-        with open(path,'w') as f:
-            f.write(goal+'\n') 
+        goals = goals_u.split("#")
+        output = ''
+        for index,goal in enumerate(goals) :
+            path = os.path.join(dir_path,'heuristics_data.in')
+            with open(path,'w') as f:
+                f.write(goal+'\n') 
+            if index == len(goals)-1:
+                output += heuristics.solve(path)+'\n'
+            else:
+                output += heuristics.solve(path)+'#\n'
+        return output 
     
         

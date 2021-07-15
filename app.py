@@ -57,8 +57,8 @@ def solve_meta():
     if request.method =='GET':
         return "This the Meta Solution"
     req = request.get_json(force=True)
-    solvers.solve('meta',req['data'])
-    return "meta"
+    return solvers.solve('meta',req['data'])
+    
 
 
 
