@@ -3,7 +3,7 @@
 
 
 import os 
-import dp ,baseline
+import dp ,baseline,mip
 
 
 
@@ -18,12 +18,12 @@ def solve(solver,goal):
 
         return dp.solve(path)
 
-    
     elif solver == 'mip':
         path = os.path.join(dir_path,'mip_data.in')
         with open(path,'w') as f:
             f.write(goal+'\n') 
-    
+        return mip.solve(path)
+
     elif solver == 'baseline':
         path = os.path.join(dir_path,'baseline_data.in')
         with open(path,'w') as f:

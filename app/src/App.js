@@ -77,6 +77,21 @@ function App() {
 		},
 		[countersInfo]
 	);
+	const reset = useCallback(() => {
+    setNumberOfBranches(0)
+    setNumberOfRquests(0)
+    setNumberOfServices(0)
+    setMaxDistance(0)
+    setTimeNeeded({})
+    setRequestsInfo({})
+    setBranchesInfo({})
+    setCountersCount({})
+    setCountersInfo({})
+    setMatches('')
+    setOutput([])
+		},
+		[]
+	);
   const generateString = useMemo(() => {
     let stringInput = numberOfBranches + " " + numberOfRequests + " " + numberOfServices + " " + maxDistance +"\n";
     let  i = 0, j = 0;
@@ -131,6 +146,7 @@ function App() {
 					variant="filled"
 					size="small"
 					type="number"
+          value={numberOfBranches}
 					onChange={event => setNumberOfBranches(event.target.value * 1)}
 				/>
 				<TextField
@@ -139,6 +155,7 @@ function App() {
 					variant="filled"
 					size="small"
 					type="number"
+          value={numberOfRequests}
 					onChange={event => setNumberOfRquests(event.target.value * 1)}
 				/>
 				<TextField
@@ -147,6 +164,7 @@ function App() {
 					variant="filled"
 					size="small"
 					type="number"
+          value={numberOfServices}
 					onChange={event => setNumberOfServices(event.target.value * 1)}
 				/>
 				<TextField
@@ -155,6 +173,7 @@ function App() {
 					variant="filled"
 					size="small"
 					type="number"
+          value={maxDistance}
 					onChange={event => setMaxDistance(event.target.value * 1)}
 				/>
 			</form>
@@ -324,7 +343,8 @@ function App() {
 			<Button onClick={() => handleRun("baseline")} variant="primary">Baseline</Button>{" "}
 			<Button onClick={() => handleRun("mip")} variant="secondary">MIP</Button>{" "}
 			<Button onClick={() => handleRun("meta")} variant="success">Meta Heuristic</Button>{" "}
-			<Button onClick={() => handleRun("dp")} variant="danger">DP</Button>
+			<Button onClick={() => handleRun("dp")} variant="danger">DP</Button>{" "}
+			<Button onClick={reset} variant="warning">Reset</Button>
       <hr/>
       <h3 style={{ fontWeight: "normal", fontSize: "22px" }}>
         Output
