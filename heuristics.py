@@ -27,13 +27,12 @@ cand = []
 # Total iterations
 n_iter = 100
 # bits
-n_bits = 20
 # population size
 n_pop = 100
 # crossover rate
 r_cross = 0.9
 # mutation rate
-r_mut = 1.0 / float(n_bits)
+r_mut = 0
 
 alpha = 1
 beta = 0
@@ -65,7 +64,7 @@ def crossover(p1, p2, r_cross):
     # children are copies of parents by default
     c1, c2 = p1.copy(), p2.copy()
     # check for recombination
-    if rand() < r_cross:
+    if rand() < r_cross and len(p1) > 2:
         # select crossover point
         pt = randint(1, len(p1)-2)
         # perform crossover
@@ -89,6 +88,7 @@ def mutation(chromosome, r_mut):
             if chromosome[i] != -1:
                 j, w, k = unmap[chromosome[i]]
                 for k2 in range(k, k+slots[rs[i]][j]):
+                    # print(i, chromosome[i], cand[i])
                     taken[ids[j][w][k2]] = True
 
     for i in genes:
@@ -164,7 +164,7 @@ def genetic_algorithm():
 
 
 def HeuristicSolution(testnum):
-    global memo, cand, n, b, s, r, m, cap, rs, slots, dist, p, serves, d, ids, unmap
+    global memo, cand, n, b, s, r, m, cap, rs, slots, dist, p, serves, d, ids, unmap, r_mut
 
     b, s, r, m, cap, rs, slots, dist, p, serves, d = opentest.open_test(
         testnum)
@@ -196,6 +196,7 @@ def HeuristicSolution(testnum):
                 if serves[j][w][rs[i]] and dist[i][j] <= d and k+slots[rs[i]][j] <= s[j]:
                     cand[i].append(ids[j][w][k])
 
+    r_mut = 1.0 / float(min(20, n))
     score, chromosome = genetic_algorithm()
     solution = []
     for i in range(r):
