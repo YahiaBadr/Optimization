@@ -36,8 +36,8 @@ def solve_mip():
     if request.method =='GET':
         return "This the MIP Solution"
     req = request.get_json(force=True)
-    solvers.solve('mip',req['data'])
-    return "mip"
+    return solvers.solve('mip',req['data'])
+    
 
 
 
