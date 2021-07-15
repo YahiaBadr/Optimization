@@ -3,7 +3,7 @@
 
 
 import os 
-# import dp , mip, baseline
+import dp ,baseline
 
 
 
@@ -12,23 +12,27 @@ def solve(solver,goal):
     os.makedirs(dir_path,exist_ok=True)
     
     if solver == 'dp':
-        file_path = os.path.join(dir_path,'dp_output.out')
-        with open(file_path,'w') as f:
-            f.write(goal+'\n')
+        path = os.path.join(dir_path,'dp_data.in')
+        with open(path,'w') as f:
+            f.write(goal)
+
+        return dp.solve(path)
+
     
     elif solver == 'mip':
-        file_path = os.path.join(dir_path,'mip_output.out')
-        with open(file_path,'w') as f:
+        path = os.path.join(dir_path,'mip_data.in')
+        with open(path,'w') as f:
             f.write(goal+'\n') 
     
     elif solver == 'baseline':
-        file_path = os.path.join(dir_path,'baseline_output.out')
-        with open(file_path,'w') as f:
+        path = os.path.join(dir_path,'baseline_data.in')
+        with open(path,'w') as f:
             f.write(goal+'\n') 
-    
+        return baseline.solve(path)
+
     elif solver=='meta':
-        file_path = os.path.join(dir_path,'meta_output.out')
-        with open(file_path,'w') as f:
+        path = os.path.join(dir_path,'meta_data.in')
+        with open(path,'w') as f:
             f.write(goal+'\n') 
     
         

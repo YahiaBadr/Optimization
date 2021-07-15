@@ -100,27 +100,43 @@ def dpSolution(testnum):
     return dp(0, 0)
 
 
-folderName = sys.argv[1]
 
-try:
-    os.mkdir(folderName+"_output")
-except FileExistsError:
-    nothing = ''
-try:
-    os.mkdir(folderName+"_output/DP")
-except FileExistsError:
-    nothing = ''
-for filename in sorted(os.listdir("./"+folderName), key=lambda x: int(x.split("_")[1].split(".")[0])):
-    testnum = int(filename[5:len(filename)-3])
-    path = "./" + folderName + "/" + filename
+if __name__=='__main__':
+    folderName = sys.argv[1]
+
+    try:
+        os.mkdir(folderName+"_output")
+    except FileExistsError:
+        nothing = ''
+    try:
+        os.mkdir(folderName+"_output/DP")
+    except FileExistsError:
+        nothing = ''
+    for filename in sorted(os.listdir("./"+folderName), key=lambda x: int(x.split("_")[1].split(".")[0])):
+        testnum = int(filename[5:len(filename)-3])
+        path = "./" + folderName + "/" + filename
+        matches = dpSolution(path)
+        solution = trace(0, 0)
+        output = open(folderName+"_output/DP/" +
+                    filename[:len(filename)-3]+".out", "w")
+        output.write(str(matches)+"\n")
+        for i in range(len(solution)):
+            if(solution[i] != -1):
+                (i, takenBranch, startSlot, counter) = solution[i]
+                output.write(str(i) + " " + str(takenBranch) + " " +
+                            str(startSlot) + " " + str(counter) + "\n")
+        print(filename+' Done')
+
+
+
+
+def solve(path):
     matches = dpSolution(path)
     solution = trace(0, 0)
-    output = open(folderName+"_output/DP/" +
-                  filename[:len(filename)-3]+".out", "w")
-    output.write(str(matches)+"\n")
+    output = (str(matches)+"\n")
     for i in range(len(solution)):
         if(solution[i] != -1):
             (i, takenBranch, startSlot, counter) = solution[i]
-            output.write(str(i) + " " + str(takenBranch) + " " +
-                         str(startSlot) + " " + str(counter) + "\n")
-    print(filename+' Done')
+            output +=(str(i) + " " + str(takenBranch) + " " +
+                        str(startSlot) + " " + str(counter) + "\n")
+    return output
