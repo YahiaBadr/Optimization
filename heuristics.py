@@ -70,6 +70,10 @@ def crossover(p1, p2, r_cross):
         # perform crossover
         c1 = p1[:pt] + p2[pt:]
         c2 = p2[:pt] + p1[pt:]
+    # for i in range(r):
+    #     if p1[i] in cand[i] and p2[i] in cand[i] and (c1[i] not in cand[i] or c2[i] not in cand[i]):
+    #         print('problemo')
+
     return [c1, c2]
 
 
@@ -123,7 +127,7 @@ def generate_random_chromosome():
         j, w, k = unmap[cand[i][choice]]
         for k2 in range(k, k+slots[rs[i]][j]):
             taken[ids[j][w][k2]] = True
-        chromosome[i] = choice
+        chromosome[i] = cand[i][choice]
 
     return chromosome
 
@@ -131,7 +135,6 @@ def generate_random_chromosome():
 def genetic_algorithm():
     # initial population of random solutions
     pop = [generate_random_chromosome() for _ in range(n_pop)]
-    # print(pop)
     # keep track of best solution
     best, best_eval = pop[0], objective(pop[0])
     # enumerate generations
