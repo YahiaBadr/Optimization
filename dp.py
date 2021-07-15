@@ -2,6 +2,7 @@ import os
 import sys
 import opentest
 import numpy as np
+import time
 
 memo = []
 b = 0
@@ -55,8 +56,8 @@ def trace(i, mask):
 
     best = dp(i, mask)
     if best == dp(i+1, mask):
-        trace(i+1, mask)
-        return
+        return trace(i+1, mask)
+        
 
     for (j, w) in cand[i]:
         for k in range(s[j]):
@@ -98,8 +99,7 @@ def dpSolution(testnum):
     return dp(0, 0)
 
 
-
-if __name__=='__main__':
+if __name__ == '__main__':
     folderName = sys.argv[1]
 
     try:
@@ -113,19 +113,20 @@ if __name__=='__main__':
     for filename in sorted(os.listdir("./"+folderName), key=lambda x: int(x.split("_")[1].split(".")[0])):
         testnum = int(filename[5:len(filename)-3])
         path = "./" + folderName + "/" + filename
+        start = time.time()
         matches = dpSolution(path)
         solution = trace(0, 0)
+        end = time.time()
         output = open(folderName+"_output/DP/" +
-                    filename[:len(filename)-3]+".out", "w")
+                      filename[:len(filename)-3]+".out", "w")
         output.write(str(matches)+"\n")
         for i in range(len(solution)):
             if(solution[i] != -1):
                 (i, takenBranch, startSlot, counter) = solution[i]
                 output.write(str(i) + " " + str(takenBranch) + " " +
-                            str(startSlot) + " " + str(counter) + "\n")
-        print(filename+' Done')
-
-
+                             str(startSlot) + " " + str(counter) + "\n")
+        # print(filename+' Done')
+        print((end-start)*1000)
 
 
 def solve(path):
@@ -135,6 +136,6 @@ def solve(path):
     for i in range(len(solution)):
         if(solution[i] != -1):
             (i, takenBranch, startSlot, counter) = solution[i]
-            output +=(str(i) + " " + str(takenBranch) + " " +
-                        str(startSlot) + " " + str(counter) + "\n")
+            output += (str(i) + " " + str(takenBranch) + " " +
+                       str(startSlot) + " " + str(counter) + "\n")
     return output
