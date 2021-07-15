@@ -64,7 +64,7 @@ def crossover(p1, p2, r_cross):
     # children are copies of parents by default
     c1, c2 = p1.copy(), p2.copy()
     # check for recombination
-    if rand() < r_cross and len(p1) > 2:
+    if rand() < r_cross and len(p1) > 3:
         # select crossover point
         pt = randint(1, len(p1)-2)
         # perform crossover
