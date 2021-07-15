@@ -1,0 +1,4 @@
+.git
+.dockerignore
+__pycache__/
+app/node_modules
