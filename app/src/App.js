@@ -46,15 +46,20 @@ function App() {
     let stringInput = "";
     for (let i = 0; i < dataStringLines.length; i++) {
       const row = dataStringLines[i].split(/,(?![^"]*"(?:(?:[^"]*"){2})*[^"]*$)/);
+      let found = false;
       for( let string of row) {
         if(string === "" || string === " ") continue;
+        if(string === "#") {
+          stringInput = stringInput.substr(0, stringInput.length - 1)
+          found = true;
+        }
         stringInput += string + " "
-        console.log(string)
       }
       stringInput = stringInput.substr(0, stringInput.length - 1)
-      stringInput += "\n"
+      if(!found)
+        stringInput += "\n"
     }
-    console.log(stringInput)
+    stringInput = stringInput.substr(0, stringInput.length - 1)
     setFIleInput(stringInput)
   }
 
@@ -172,11 +177,10 @@ function App() {
     const stringInput = fileInput === '' ? generateString : fileInput;
     const res = await axios.post(`http://localhost:5000/${algo}`, {data: stringInput})
     const outputRecieved = res.data
-    let outputs = outputRecieved.split("#");
     let results = []
-    for(let output of outputs) {
+    for(let output of outputRecieved) {
       let array = output.split("\n");
-      results.append({matches: array[0], requests: array.slice(1)})
+      results.push({matches: array[0], output: array.slice(1, array.length - 1)})
     }
     setResults(results)
     setFIleInput('')
@@ -397,7 +401,7 @@ function App() {
         Outputs
       </h3>
       {results.map(({matches, output}, i)=>
-        <div key={i}>
+		<div key={i}>
           <h3 style={{ fontWeight: "600", fontSize: "18px" }}>
             Number of Matches: {matches}
           </h3>
