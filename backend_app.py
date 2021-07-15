@@ -19,12 +19,16 @@ def index():
 
 @app.route('/baseline',methods=['POST','GET'])
 def solve_baseline():
+    if request.method =='GET':
+        return "This the Baseline Solution"
     req = request.get_json(force=True)
     solvers.solve('baseline',req['data'])
     return "baseline"
 
 @app.route('/mip',methods=['POST','GET'])
 def solve_mip():
+    if request.method =='GET':
+        return "This the MIP Solution"
     req = request.get_json(force=True)
     solvers.solve('mip',req['data'])
     return "mip"
@@ -33,6 +37,8 @@ def solve_mip():
 
 @app.route('/dp',methods=['POST','GET'])
 def solve_dp():
+    if request.method =='GET':
+        return "This the DP Solution"
     req = request.get_json(force=True)
     solvers.solve('dp',req['data'])
     return "dp"
@@ -40,6 +46,8 @@ def solve_dp():
 
 @app.route('/meta',methods=['POST','GET'])
 def solve_meta():
+    if request.method =='GET':
+        return "This the Meta Solution"
     req = request.get_json(force=True)
     solvers.solve('meta',req['data'])
     return "meta"
