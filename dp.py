@@ -2,7 +2,6 @@ import os
 import sys
 import opentest
 import numpy as np
-import time
 
 memo = []
 b = 0
@@ -112,10 +111,8 @@ if __name__ == '__main__':
     for filename in sorted(os.listdir("./"+folderName), key=lambda x: int(x.split("_")[1].split(".")[0])):
         testnum = int(filename[5:len(filename)-3])
         path = "./" + folderName + "/" + filename
-        start = time.time()
         matches = dpSolution(path)
         solution = trace(0, 0)
-        end = time.time()
         output = open(folderName+"_output/DP/" +
                       filename[:len(filename)-3]+".out", "w")
         output.write(str(matches)+"\n")
@@ -124,8 +121,6 @@ if __name__ == '__main__':
                 (i, takenBranch, startSlot, counter) = solution[i]
                 output.write(str(i) + " " + str(takenBranch) + " " +
                              str(startSlot) + " " + str(counter) + "\n")
-        # print(filename+' Done')
-        print((end-start)*1000)
 
 
 def solve(path):
