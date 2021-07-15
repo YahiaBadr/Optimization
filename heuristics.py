@@ -27,13 +27,12 @@ cand = []
 # Total iterations
 n_iter = 100
 # bits
-n_bits = 20
 # population size
 n_pop = 100
 # crossover rate
 r_cross = 0.9
 # mutation rate
-r_mut = 1.0 / float(n_bits)
+r_mut = 0
 
 alpha = 1
 beta = 0
@@ -65,7 +64,7 @@ def crossover(p1, p2, r_cross):
     # children are copies of parents by default
     c1, c2 = p1.copy(), p2.copy()
     # check for recombination
-    if rand() < r_cross:
+    if rand() < r_cross and len(p1) > 3:
         # select crossover point
         pt = randint(1, len(p1)-2)
         # perform crossover
@@ -100,7 +99,7 @@ def mutation(chromosome, r_mut):
         j, w, k = unmap[cand[i][choice]]
         for k2 in range(k, k+slots[rs[i]][j]):
             taken[ids[j][w][k2]] = True
-        chromosome[i] = choice
+        chromosome[i] = cand[i][choice]
 
 
 def is_valid_gene(taken, i, idx):
@@ -123,7 +122,7 @@ def generate_random_chromosome():
         j, w, k = unmap[cand[i][choice]]
         for k2 in range(k, k+slots[rs[i]][j]):
             taken[ids[j][w][k2]] = True
-        chromosome[i] = choice
+        chromosome[i] = cand[i][choice]
 
     return chromosome
 
@@ -131,7 +130,6 @@ def generate_random_chromosome():
 def genetic_algorithm():
     # initial population of random solutions
     pop = [generate_random_chromosome() for _ in range(n_pop)]
-    # print(pop)
     # keep track of best solution
     best, best_eval = pop[0], objective(pop[0])
     # enumerate generations
@@ -159,12 +157,11 @@ def genetic_algorithm():
                 children.append(c)
         # replace population
         pop = children
-    # print(best)
     return (best_eval, best)
 
 
 def HeuristicSolution(testnum):
-    global memo, cand, n, b, s, r, m, cap, rs, slots, dist, p, serves, d, ids, unmap
+    global memo, cand, n, b, s, r, m, cap, rs, slots, dist, p, serves, d, ids, unmap, r_mut
 
     b, s, r, m, cap, rs, slots, dist, p, serves, d = opentest.open_test(
         testnum)
@@ -190,12 +187,12 @@ def HeuristicSolution(testnum):
 
     for i in range(r):
         cand[i] = []
-    for j in range(b):
-        for w in range(cap[j]):
-            for k in range(s[j]):
-                if serves[j][w][rs[i]] and dist[i][j] <= d and k+slots[rs[i]][j] <= s[j]:
-                    cand[i].append(ids[j][w][k])
-
+        for j in range(b):
+            for w in range(cap[j]):
+                for k in range(s[j]):
+                    if serves[j][w][rs[i]] == 1 and slots[rs[i]][j] + k <= s[j] and dist[i][j] <= d:
+                        cand[i].append(ids[j][w][k])
+    r_mut = 1.0 / float(min(20, n))
     score, chromosome = genetic_algorithm()
     solution = []
     for i in range(r):
