@@ -3,9 +3,10 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Button } from "react-bootstrap";
 import { makeStyles } from "@material-ui/core/styles";
 import { TextField } from "@material-ui/core";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import axios from 'axios';
 import ResultTable from "./ResultTable";
+import * as XLSX from 'xlsx';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -34,8 +35,42 @@ function App() {
 	const [branchesInfo, setBranchesInfo] = useState({});
 	const [countersCount, setCountersCount] = useState({});
 	const [countersInfo, setCountersInfo] = useState({});
-	const [matches, setMatches] = useState('');
-	const [output, setOutput] = useState([]);
+	const [results, setResults] = useState([]);
+  const [fileInput, setFIleInput] = useState('');
+  const ref = useRef();
+
+  // process CSV data
+  const processData = dataString => {
+    const dataStringLines = dataString.split(/\r\n|\n/);
+
+    let stringInput = "";
+    for (let i = 0; i < dataStringLines.length; i++) {
+      const row = dataStringLines[i].split(/,(?![^"]*"(?:(?:[^"]*"){2})*[^"]*$)/);
+      for( let string of row) {
+        stringInput+= string + " "
+      }
+      stringInput += "\n"
+    }
+    setFIleInput(stringInput)
+  }
+
+  // handle file upload
+  const handleFileUpload = e => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      /* Parse data */
+      const bstr = evt.target.result;
+      const wb = XLSX.read(bstr, { type: 'binary' });
+      /* Get first worksheet */
+      const wsname = wb.SheetNames[0];
+      const ws = wb.Sheets[wsname];
+      /* Convert array of arrays */
+      const data = XLSX.utils.sheet_to_csv(ws, { header: 1 });
+      processData(data);
+    };
+    reader.readAsBinaryString(file);
+  }
 
 	const setTimeForService = useCallback(
 		(branch, service, time) => {
@@ -87,8 +122,7 @@ function App() {
     setBranchesInfo({})
     setCountersCount({})
     setCountersInfo({})
-    setMatches('')
-    setOutput([])
+    setResults([])
 		},
 		[]
 	);
@@ -129,13 +163,18 @@ function App() {
     return stringInput
   },[numberOfBranches, numberOfRequests, numberOfServices, timeNeeded, requestsInfo, branchesInfo, countersCount, countersInfo, maxDistance])
   const handleRun = useCallback( async (algo) => {
-    const stringInput = generateString;
+    const stringInput = fileInput === '' ? generateString : fileInput;
     const res = await axios.post(`http://localhost:5000/${algo}`, {data: stringInput})
     const outputRecieved = res.data
-    let array = outputRecieved.split("\n");
-    setMatches(array[0])
-    setOutput(array.slice(1))
-  },[generateString])
+    let outputs = outputRecieved.split("#");
+    let results = []
+    for(let output of outputs) {
+      let array = output.split("\n");
+      results.append({matches: array[0], requests: array.slice(1)})
+    }
+    setResults(results)
+    ref.current.value = ""
+  },[generateString, fileInput])
 	return (
 		<div className="App">
 			<h1>Balck Opt - Bank Reservation System</h1>
@@ -344,15 +383,20 @@ function App() {
 			<Button onClick={() => handleRun("mip")} variant="secondary">MIP</Button>{" "}
 			<Button onClick={() => handleRun("meta")} variant="success">Meta Heuristic</Button>{" "}
 			<Button onClick={() => handleRun("dp")} variant="danger">DP</Button>{" "}
-			<Button onClick={reset} variant="warning">Reset</Button>
+			<Button onClick={reset} variant="warning">Reset</Button> {" "}
+      <input ref={ref} type="file" accept=".csv" onChange={handleFileUpload}/>
       <hr/>
-      <h3 style={{ fontWeight: "normal", fontSize: "22px" }}>
-        Output
+      <h3 style={{ fontWeight: "800", fontSize: "22px" }}>
+        Outputs
       </h3>
-      <h3 style={{ fontWeight: "normal", fontSize: "18px" }}>
-        Number of Matches: {matches}
-      </h3>
-      <ResultTable output={output}/>
+      {results.map(({matches, output}, i)=>
+        <div key={i}>
+          <h3 style={{ fontWeight: "600", fontSize: "18px" }}>
+            Number of Matches: {matches}
+          </h3>
+          <ResultTable output={output}/>
+        </div>
+      )}
 		</div>
 	);
 }
