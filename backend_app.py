@@ -19,28 +19,32 @@ def index():
 
 @app.route('/baseline',methods=['POST','GET'])
 def solve_baseline():
-    solvers.solve('baseline',request.form['data'])
+    req = request.get_json(force=True)
+    solvers.solve('baseline',req['data'])
     return "baseline"
 
 @app.route('/mip',methods=['POST','GET'])
 def solve_mip():
-    solvers.solve('mip',request.form['data'])
+    req = request.get_json(force=True)
+    solvers.solve('mip',req['data'])
     return "mip"
 
 
 
 @app.route('/dp',methods=['POST','GET'])
 def solve_dp():
-    solvers.solve('dp',request.form['data'])
+    req = request.get_json(force=True)
+    solvers.solve('dp',req['data'])
     return "dp"
 
 
 @app.route('/meta',methods=['POST','GET'])
 def solve_meta():
-    solvers.solve('meta',request.form['data'])
+    req = request.get_json(force=True)
+    solvers.solve('meta',req['data'])
     return "meta"
 
 
 
 if __name__=="__main__":
-    app.run()
+    app.run(debug=True)
