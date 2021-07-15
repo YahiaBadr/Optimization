@@ -38,7 +38,6 @@ def MIPSolution(path):
 
                     x[i][j][k].append(solver.IntVar(0, 1 * domain_constraint,
                                                     'x' + str(i) + "-" + str(j) + "-" + str(k) + '-' + str(w)))
-
     ## constraint 2 ###
     for i in range(r):
         summation = 0
@@ -58,10 +57,8 @@ def MIPSolution(path):
                         if i2 == i or k + slots[rs[i]][j] > s[j]:
                             continue
                         for k2 in range(k, k + slots[rs[i]][j]):
-                            solver.Add(x[i][j][k][w] <= M *
-                                       (1-x[i2][j][k2][w]))
+                            solver.Add(x[i][j][k][w] <= (1-x[i2][j][k2][w]))
     # end of constraint 3
-
     ### objective function ###
     F0 = 0
     F1 = 0
@@ -76,6 +73,7 @@ def MIPSolution(path):
 
     objective_eqn = (alpha*F0) + (beta*F1) - (gamma*F2)
     solver.Maximize(objective_eqn)
+    solver.SetTimeLimit(5000)
     solver.Solve()
     score = solver.Objective().Value()
     solution = []
@@ -102,7 +100,11 @@ if __name__ == '__main__':
     for filename in sorted(os.listdir("./"+folderName), key=lambda x: int(x.split("_")[1].split(".")[0])):
         testnum = int(filename[5:len(filename)-3])
         path = "./" + folderName + "/" + filename
-        matches, solution = MIPSolution(path)
+        try:
+            matches, solution = MIPSolution(path)
+        except:
+            matches = 0
+            solution = []
         output = open(folderName+"_output/MIP/" +
                       filename[:len(filename)-3]+".out", "w")
         output.write(str(matches)+"\n")
@@ -112,3 +114,19 @@ if __name__ == '__main__':
                 output.write(str(i) + " " + str(takenBranch) +
                              " " + str(startSlot) + " " + str(counter) + "\n")
         print(filename+' Done')
+
+
+def solve(path):
+
+    try:
+        matches, solution = MIPSolution(path)
+    except:
+        matches = 0
+        solution = []
+    
+    output= str(matches)+"\n"
+    for i in range(len(solution)):
+        if(solution[i] != -1):
+            (i, takenBranch, startSlot, counter) = solution[i]
+            output += str(i) + " " + str(takenBranch) +" " + str(startSlot) + " " + str(counter) + "\n"
+    return output
