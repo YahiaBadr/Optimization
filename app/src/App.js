@@ -166,7 +166,7 @@ function App() {
 					</h3>
 				</>
 			)}
-			{numberOfBranches > 0 && [...Array(numberOfBranches)].map((e, i) => {
+			{numberOfServices > 0 && [...Array(numberOfServices)].map((e, i) => {
 				return (
 					<>
 						<form
@@ -175,17 +175,17 @@ function App() {
 							autoComplete="off"
 							key={`branch-${i}`}
 						>
-							{numberOfServices > 0 && [...Array(numberOfServices)].map((e, j) => {
+							{numberOfBranches > 0 && [...Array(numberOfBranches)].map((e, j) => {
 								return (
 									<TextField
 										id={`branch-${i}-service-${j}`}
 										key={`branch-${i}-service-${j}`}
-										label={`Service ${j + 1} at Branch ${i + 1}`}
+										label={`Service ${i + 1} at Branch ${j + 1}`}
 										variant="filled"
 										size="small"
 										type="number"
 										onChange={event =>
-											setTimeForService(i, j, event.target.value * 1)
+											setTimeForService(j, i, event.target.value * 1)
 										}
 									/>
 								);
