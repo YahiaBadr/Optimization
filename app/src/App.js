@@ -32,6 +32,8 @@ function App() {
 	const [branchesInfo, setBranchesInfo] = useState({});
 	const [countersCount, setCountersCount] = useState({});
 	const [countersInfo, setCountersInfo] = useState({});
+	const [matches, setMatches] = useState('');
+	const [output, setOutput] = useState([]);
 
 	const setTimeForService = useCallback(
 		(branch, service, time) => {
@@ -113,6 +115,10 @@ function App() {
     const stringInput = generateString;
     console.log(algo)
     console.log(stringInput)
+    const outputRecieved = `3\n1 2 1 3\n2 2 2 3\n3 2 1 2`
+    let array = outputRecieved.split("\n");
+    setMatches(array[0])
+    setOutput(array.slice(1))
   },[generateString])
 	return (
 		<div className="App">
@@ -318,6 +324,19 @@ function App() {
 			<Button onClick={() => handleRun("mip")} variant="secondary">MIP</Button>{" "}
 			<Button onClick={() => handleRun("meta-heuristic")} variant="success">Meta Heuristic</Button>{" "}
 			<Button onClick={() => handleRun("dp")} variant="danger">DP</Button>
+      <hr/>
+      <h3 style={{ fontWeight: "normal", fontSize: "22px" }}>
+        Output
+      </h3>
+      <h3 style={{ fontWeight: "normal", fontSize: "18px" }}>
+        Number of Matches: {matches}
+      </h3>
+      {
+        output.map((match, i) =>
+        <h3 style={{ fontWeight: "normal", fontSize: "18px" }}>
+          {match}
+        </h3>)
+      }
 		</div>
 	);
 }
