@@ -46,7 +46,7 @@ def objective(chromosome):
     for i in range(r):
         if chromosome[i] != -1:
             z += 1
-    return 0
+    return z
 
 # tournament based selection
 
@@ -129,10 +129,11 @@ def generate_random_chromosome():
 
 
 def genetic_algorithm():
-    # initial population of random bitstring
+    # initial population of random solutions
     pop = [generate_random_chromosome() for _ in range(n_pop)]
+    # print(pop)
     # keep track of best solution
-    best, best_eval = 0, objective(pop[0])
+    best, best_eval = pop[0], objective(pop[0])
     # enumerate generations
     for gen in range(n_iter):
         # evaluate all candidates in the population
@@ -158,7 +159,8 @@ def genetic_algorithm():
                 children.append(c)
         # replace population
         pop = children
-    return (best_eval, pop[best])
+    # print(best)
+    return (best_eval, best)
 
 
 def HeuristicSolution(testnum):
