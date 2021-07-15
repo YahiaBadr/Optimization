@@ -138,3 +138,4 @@ def solve(path):
             output +=(str(i) + " " + str(takenBranch) + " " +
                         str(startSlot) + " " + str(counter) + "\n")
     return output
+
