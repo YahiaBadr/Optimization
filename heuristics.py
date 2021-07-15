@@ -86,24 +86,27 @@ def mutation(chromosome, r_mut):
             genes.append(i)
             chromosome[i] = -1
         else:
-            (j, w, k) = unmap[chromosome[i]]
-            for k2 in range(k, k+slots[rs[i]][j]):
-                taken[ids[j][w][k2]] = True
+            if chromosome[i] != -1:
+                j, w, k = unmap[chromosome[i]]
+                for k2 in range(k, k+slots[rs[i]][j]):
+                    taken[ids[j][w][k2]] = True
 
     for i in genes:
         choice = random.randint(0, len(cand[i])+1)
-        if choice == len(cand[i]) or not is_valid_gene(taken, i, cand[choice]):
+        if choice == len(cand[i]):
             continue
-        j, w, k = unmap[cand[choice]]
+        if not is_valid_gene(taken, i, cand[i][choice]):
+            continue
+        j, w, k = unmap[cand[i][choice]]
         for k2 in range(k, k+slots[rs[i]][j]):
-            taken[ids[i][w][k2]] = True
+            taken[ids[j][w][k2]] = True
         chromosome[i] = choice
 
 
 def is_valid_gene(taken, i, idx):
     j, w, k = unmap[idx]
     for k2 in range(k, k+slots[rs[i]][j]):
-        if taken[ids[i][w][k2]]:
+        if taken[ids[j][w][k2]]:
             return False
     return True
 
@@ -113,11 +116,13 @@ def generate_random_chromosome():
     chromosome = [-1]*r
     for i in range(r):
         choice = random.randint(0, len(cand[i])+1)
-        if choice == len(cand[i]) or not is_valid_gene(taken, i, cand[choice]):
+        if choice == len(cand[i]):
             continue
-        j, w, k = unmap[cand[choice]]
+        if not is_valid_gene(taken, i, cand[i][choice]):
+            continue
+        j, w, k = unmap[cand[i][choice]]
         for k2 in range(k, k+slots[rs[i]][j]):
-            taken[ids[i][w][k2]] = True
+            taken[ids[j][w][k2]] = True
         chromosome[i] = choice
 
     return chromosome
@@ -153,11 +158,11 @@ def genetic_algorithm():
                 children.append(c)
         # replace population
         pop = children
-    return (best, best_eval)
+    return (best_eval, pop[best])
 
 
 def HeuristicSolution(testnum):
-    global memo, cand, n, b, s, r, m, cap, rs, slots, dist, p, serves, d, ids
+    global memo, cand, n, b, s, r, m, cap, rs, slots, dist, p, serves, d, ids, unmap
 
     b, s, r, m, cap, rs, slots, dist, p, serves, d = opentest.open_test(
         testnum)
@@ -170,15 +175,16 @@ def HeuristicSolution(testnum):
     ids = []
     unmap = []
     n = 0
+    cand = [None]*r
 
     for i in range(b):
         ids.append([])
-    for j in range(cap[i]):
-        ids[i].append([])
-        for k in range(s[i]):
-            ids[i][j].append(n)
-            unmap.append((i, j, k))
-            n = n+1
+        for j in range(cap[i]):
+            ids[i].append([])
+            for k in range(s[i]):
+                ids[i][j].append(n)
+                unmap.append((i, j, k))
+                n = n+1
 
     for i in range(r):
         cand[i] = []
@@ -193,7 +199,8 @@ def HeuristicSolution(testnum):
     for i in range(r):
         if chromosome[i] != -1:
             j, w, k = unmap[chromosome[i]]
-            solution.append((i+1, j+1, k+1))
+            solution.append((i+1, j+1, k+1, w+1))
+    return score, solution
 
 
 folderName = 'test'
@@ -210,7 +217,6 @@ for filename in sorted(os.listdir("./"+folderName), key=lambda x: int(x.split("_
     testnum = int(filename[5:len(filename)-3])
     path = "./" + folderName + "/" + filename
     matches, solution = HeuristicSolution(path)
-    solution = None
     output = open(folderName+"_output/Heuristic/" +
                   filename[:len(filename)-3]+".out", "w")
     output.write(str(matches)+"\n")
