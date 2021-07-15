@@ -19,8 +19,6 @@ ids = []
 cand = []
 
 
-# Complexity: r*S*2^(S) , S = summationoverl allbranches(summation(slots)*summation(counters))
-
 def dp(i, mask):
     if i == r:
         return 0
