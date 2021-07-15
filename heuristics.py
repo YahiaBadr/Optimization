@@ -104,7 +104,7 @@ def mutation(chromosome, r_mut):
         j, w, k = unmap[cand[i][choice]]
         for k2 in range(k, k+slots[rs[i]][j]):
             taken[ids[j][w][k2]] = True
-        chromosome[i] = choice
+        chromosome[i] = cand[i][choice]
 
 
 def is_valid_gene(taken, i, idx):
