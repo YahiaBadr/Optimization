@@ -70,10 +70,6 @@ def crossover(p1, p2, r_cross):
         # perform crossover
         c1 = p1[:pt] + p2[pt:]
         c2 = p2[:pt] + p1[pt:]
-    # for i in range(r):
-    #     if p1[i] in cand[i] and p2[i] in cand[i] and (c1[i] not in cand[i] or c2[i] not in cand[i]):
-    #         print('problemo')
-
     return [c1, c2]
 
 
@@ -92,7 +88,6 @@ def mutation(chromosome, r_mut):
             if chromosome[i] != -1:
                 j, w, k = unmap[chromosome[i]]
                 for k2 in range(k, k+slots[rs[i]][j]):
-                    # print(i, chromosome[i], cand[i])
                     taken[ids[j][w][k2]] = True
 
     for i in genes:
@@ -162,7 +157,6 @@ def genetic_algorithm():
                 children.append(c)
         # replace population
         pop = children
-    # print(best)
     return (best_eval, best)
 
 
@@ -193,12 +187,11 @@ def HeuristicSolution(testnum):
 
     for i in range(r):
         cand[i] = []
-    for j in range(b):
-        for w in range(cap[j]):
-            for k in range(s[j]):
-                if serves[j][w][rs[i]] and dist[i][j] <= d and k+slots[rs[i]][j] <= s[j]:
-                    cand[i].append(ids[j][w][k])
-
+        for j in range(b):
+            for w in range(cap[j]):
+                for k in range(s[j]):
+                    if serves[j][w][rs[i]] == 1 and slots[rs[i]][j] + k <= s[j] and dist[i][j] <= d:
+                        cand[i].append(ids[j][w][k])
     r_mut = 1.0 / float(min(20, n))
     score, chromosome = genetic_algorithm()
     solution = []
