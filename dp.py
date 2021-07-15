@@ -57,7 +57,6 @@ def trace(i, mask):
     best = dp(i, mask)
     if best == dp(i+1, mask):
         return trace(i+1, mask)
-        
 
     for (j, w) in cand[i]:
         for k in range(s[j]):
@@ -91,7 +90,7 @@ def dpSolution(testnum):
         cand[i] = []
         for j in range(b):
             for w in range(cap[j]):
-                if serves[j][w][rs[i]]:
+                if serves[j][w][rs[i]] and dist[i][j] <= d:
                     cand[i].append((j, w))
 
     memo = [[-1]*(1 << cnt) for _ in range(r)]
