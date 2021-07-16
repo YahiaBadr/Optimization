@@ -6,6 +6,4 @@ test
 test_output
 
 create_summary.py
-data_generator.py
-
 .DS_Store
