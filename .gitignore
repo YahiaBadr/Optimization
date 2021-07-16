@@ -5,5 +5,7 @@ __pycache__/
 test
 test_output
 
-testset_3
-testset_3_output
+create_summary.py
+data_generator.py
+
+.DS_Store
