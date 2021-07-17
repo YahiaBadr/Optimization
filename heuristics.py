@@ -27,7 +27,7 @@ cand = []
 # Number of generations
 n_gen = 50
 # population size
-pop_size = 150
+pop_size = 50
 # crossover rate
 r_cross = 0.9
 # mutation rate (Default Value, will be changed according to input)
@@ -74,7 +74,7 @@ def check_miscarriage(genome):
 def crossover(p1, p2, r_cross):
     ''' Perform Cross over of two parents to create two children'''
     # children are copies of parents by default
-    c1, c2 = p1.copy(), p2.copy()
+    c1, c2 = p1, p2
     # check for recombination
     if rand() < r_cross and len(p1) > 3:
         # select crossover point

@@ -46,7 +46,7 @@ if __name__ == '__main__':
     dir_path = folderName+'_output'
     os.makedirs(dir_path, exist_ok=True)
     summary_df = pd.DataFrame(columns=['test_case', 'r', 'b', 'd', 'mip_z',
-                                       'mip_t',  'baseline_z', 'baseline_t', 'heuristics_z', 'heuristics_t'])
+                                       'mip_t',  'dp_z', 'dp_t', 'baseline_z', 'baseline_t', 'heuristics_z', 'heuristics_t'])
     summary_dir = os.path.join(dir_path, 'summary.csv')
 
     for filename in sorted(os.listdir("./"+folderName), key=lambda x: int(x.split("_")[1].split(".")[0])):
@@ -71,8 +71,8 @@ if __name__ == '__main__':
             'r': r,
             'b': b,
             'd': d,
-            'dp_z':dp_z,
-            'dp_t':dp_t,
+            'dp_z': dp_z,
+            'dp_t': dp_t,
             'mip_z': mip_z,
             'mip_t': mip_t,
             'baseline_z': baseline_z,
