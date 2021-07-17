@@ -2,7 +2,7 @@
 
 
 
-from flask import Flask, request,jsonify
+from flask import Flask, request,jsonify,send_file
 from flask_cors import CORS, cross_origin
 
 import solvers
@@ -11,7 +11,7 @@ import solvers
 
 
 
-app = Flask (__name__)
+app = Flask (__name__,static_url_path='')
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
@@ -58,6 +58,13 @@ def solve_meta():
         return "This the Meta Solution"
     req = request.get_json(force=True)
     return jsonify(solvers.solve('meta',req['data']))
+
+
+
+@app.route('/visualize',methods=['GET'])
+@cross_origin()
+def visualize():
+    return send_file('./maps/im.png')
     
 
 
