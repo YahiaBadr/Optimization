@@ -6,18 +6,21 @@ import opentest
 
 
 def get_matches(path):
-    matches = 0
+    matches = []
     with open(path, 'r') as f:
-        n = int(f.readline().strip())
-        for _ in range(n):
-            line = f.readline().split(' ')
-            matches.append((line[0]-1, line[1]-1, line[2]-1, line[3]-1))
+        lines = f.readlines()
+        for i in range(1, len(lines)):
+            line = lines[i].strip().split(' ')
+            matches.append(
+                (int(line[0])-1, int(line[1])-1, int(line[2])-1, int(line[3])-1))
+    return matches
 
 
 def calculate_distance(matches, r, n, dist, p, slots):
     ans = 0
     for (i, j, _, _) in matches:
         ans += dist[i][j]
+    return ans
 
 
 def calculate_priority(matches, r, n, dist, p, slots):
@@ -36,6 +39,7 @@ def calculate_branch_utilization(macthes, r, n, dist, p, slots):
     for (i, j, _, _) in macthes:
         ans += slots[rs[i]][j]
     ans = (ans/n)*100
+    return ans
 
 
 if __name__ == '__main__':
@@ -59,7 +63,7 @@ if __name__ == '__main__':
         summary_dir = os.path.join(dir_path, 'test%i.csv' % testnum)
 
         b, s, r, m, cap, rs, slots, dist, p, serves, d = opentest.open_test(
-            testnum)
+            path)
         s = np.array(s, dtype='int64')
         cap = np.array(cap, dtype='int64')
         rs = np.array(rs, dtype='int64')
@@ -75,12 +79,10 @@ if __name__ == '__main__':
         for i in range(b):
             n += s[i]*cap[i]
 
-        print(filename+' Done')
-
         for i in range(4):
             res = []
             for j in range(4):
-                res.append(methods(i)(matches[j], r, n, dist, p, slots))
+                res.append(methods[i](matches[j], r, n, dist, p, slots))
 
             new_row = {
                 'metric': metrics[i],
@@ -90,5 +92,6 @@ if __name__ == '__main__':
                 'Heuristic': res[3],
             }
 
-        summary_df = summary_df.append(new_row, ignore_index=True)
+            summary_df = summary_df.append(new_row, ignore_index=True)
         summary_df.to_csv(summary_dir, index=False)
+        print(filename+' Done')
