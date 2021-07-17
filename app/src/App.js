@@ -36,8 +36,9 @@ function App() {
 	const [countersCount, setCountersCount] = useState({});
 	const [countersInfo, setCountersInfo] = useState({});
 	const [results, setResults] = useState([]);
-  const [fileInput, setFIleInput] = useState('');
-  const ref = useRef();
+	const [image, setImage] = useState('');
+	const [fileInput, setFIleInput] = useState('');
+	const ref = useRef();
 
   // process CSV data
   const processData = dataString => {
@@ -133,6 +134,7 @@ function App() {
     setCountersInfo({})
     setResults([])
     setFIleInput('')
+	setImage('')
     ref.current.value = ""
 		},
 		[]
@@ -176,6 +178,16 @@ function App() {
   const handleRun = useCallback( async (algo) => {
     const stringInput = fileInput === '' ? generateString : fileInput;
     const res = await axios.post(`http://localhost:5000/${algo}`, {data: stringInput})
+	const response = await fetch(`http://localhost:5000/visualize`, {
+		method: 'GET', // *GET, POST, PUT, DELETE, etc.
+		mode: 'cors', // no-cors, *cors, same-origin
+		cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+		headers: {
+			'Content-Type': 'image/jpeg'
+		}
+	})
+	const blob = await response.blob()
+	fileInput === '' ? setImage(URL.createObjectURL(blob)) : setImage('')
     const outputRecieved = res.data
     let results = []
     for(let output of outputRecieved) {
@@ -183,7 +195,6 @@ function App() {
       results.push({matches: array[0], output: array.slice(1, array.length - 1)})
     }
     setResults(results)
-    setFIleInput('')
   },[generateString, fileInput])
 	return (
 		<div className="App">
@@ -407,6 +418,7 @@ function App() {
           <ResultTable output={output}/>
         </div>
       )}
+	  <img src={image}/>
 		</div>
 	);
 }
