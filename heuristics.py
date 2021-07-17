@@ -24,22 +24,22 @@ ids = []
 unmap = []
 cand = []
 
-# Total iterations
-n_iter = 100
+# Number of generations
+n_gen = 100
 # population size
-n_pop = 100
+pop_size = 100
 # crossover rate
 r_cross = 0.9
 # mutation rate
-r_mut = 0
+r_mut = 0.1
 
 alpha = 1
 beta = 0
 gamma = 0
 
 
-# objective function
 def objective(chromosome):
+    ''' Calculates the fitness value of a chromosome'''
     z = 0
     for i in range(r):
         if chromosome[i] != -1:
@@ -47,10 +47,9 @@ def objective(chromosome):
             z += alpha + beta*dist[i][j] + gamma*p[i]
     return z
 
-# tournament based selection
-
 
 def selection(pop, scores, k=5):
+    ''' Perform Torunament Based Selection'''
     selection_ix = randint(len(pop))
     for ix in randint(0, len(pop), k-1):
         if scores[ix] < scores[selection_ix]:
@@ -59,6 +58,7 @@ def selection(pop, scores, k=5):
 
 
 def check_miscarriage(genome):
+    ''' Checks if the genome resulting from the crossover has any clashes'''
     taken = [False]*n
     for i in range(r):
         j, w, k = unmap[genome[i]]
@@ -69,8 +69,8 @@ def check_miscarriage(genome):
     return False
 
 
-# crossover two parents to create two children
 def crossover(p1, p2, r_cross):
+    ''' PCross over two parents to create two children'''
     # children are copies of parents by default
     c1, c2 = p1.copy(), p2.copy()
     # check for recombination
@@ -88,10 +88,8 @@ def crossover(p1, p2, r_cross):
     return [c1, c2]
 
 
-# mutation operator
-
-
 def mutation(chromosome, r_mut):
+    ''' Performs Mutation Operation'''
     taken = [False] * n
     genes = []
     for i in range(r):
@@ -118,6 +116,7 @@ def mutation(chromosome, r_mut):
 
 
 def is_valid_gene(taken, i, idx):
+    ''' Checks if possible to assign value idx to gene i'''
     j, w, k = unmap[idx]
     for k2 in range(k, k+slots[rs[i]][j]):
         if taken[ids[j][w][k2]]:
@@ -126,6 +125,7 @@ def is_valid_gene(taken, i, idx):
 
 
 def generate_random_chromosome():
+    ''' Generates random chromosome with valid genes'''
     taken = [False]*n
     chromosome = [-1]*r
     for i in range(r):
@@ -143,25 +143,24 @@ def generate_random_chromosome():
 
 
 def genetic_algorithm():
-    # initial population of random solutions
-    pop = [generate_random_chromosome() for _ in range(n_pop)]
-    # keep track of best solution
+    # initial population
+    pop = [generate_random_chromosome() for _ in range(pop_size)]
+
     best, best_eval = pop[0], objective(pop[0])
     # enumerate generations
-    for gen in range(n_iter):
+    for gen in range(n_gen):
         # evaluate all candidates in the population
         scores = [objective(c) for c in pop]
-        # check for new best solution
-        for i in range(n_pop):
+
+        for i in range(pop_size):
             if scores[i] > best_eval:
                 best, best_eval = pop[i], scores[i]
-                print(">%d, new best f(%s) = %.3f" % (gen,  pop[i], scores[i]))
 
         # select parents
-        selected = [selection(pop, scores) for _ in range(n_pop)]
+        selected = [selection(pop, scores) for _ in range(pop_size)]
         # create the next generation
         children = list()
-        for i in range(0, n_pop, 2):
+        for i in range(0, pop_size, 2):
             # get selected parents in pairs
             p1, p2 = selected[i], selected[i+1]
             # crossover and mutation
@@ -207,7 +206,7 @@ def HeuristicSolution(testnum):
                 for k in range(s[j]):
                     if serves[j][w][rs[i]] == 1 and slots[rs[i]][j] + k <= s[j] and dist[i][j] <= d:
                         cand[i].append(ids[j][w][k])
-    r_mut = 1.0 / float(min(20, n))
+    # r_mut = 1.0 / float(min(20, n))
     score, chromosome = genetic_algorithm()
     solution = []
     for i in range(r):
