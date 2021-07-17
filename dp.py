@@ -22,6 +22,7 @@ alpha = 1
 beta = 0
 gamma = 0
 
+
 def dp(i, mask):
     if i == r:
         return 0
@@ -64,7 +65,7 @@ def trace(i, mask):
     for (j, w) in cand[i]:
         for k in range(s[j]):
             check = checkValidPlacement(i, mask, j, k, w)
-            if check != -1 and 1+dp(i+1, mask | check) == best:
+            if check != -1 and alpha - beta * dist[i][j] + gamma*p[i]+dp(i+1, mask | check) == best:
                 res = trace(i+1, mask | check)
                 return [(i+1, j+1, k+1, w+1)]+res
 
