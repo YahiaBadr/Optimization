@@ -27,10 +27,10 @@ cand = []
 # Number of generations
 n_gen = 100
 # population size
-pop_size = 100
+pop_size = 250
 # crossover rate
 r_cross = 0.9
-# mutation rate
+# mutation rate (Default Value, will be changed according to input)
 r_mut = 0.1
 
 alpha = 1
@@ -70,7 +70,7 @@ def check_miscarriage(genome):
 
 
 def crossover(p1, p2, r_cross):
-    ''' PCross over two parents to create two children'''
+    ''' Perform Cross over of two parents to create two children'''
     # children are copies of parents by default
     c1, c2 = p1.copy(), p2.copy()
     # check for recombination
@@ -206,7 +206,7 @@ def HeuristicSolution(testnum):
                 for k in range(s[j]):
                     if serves[j][w][rs[i]] == 1 and slots[rs[i]][j] + k <= s[j] and dist[i][j] <= d:
                         cand[i].append(ids[j][w][k])
-    # r_mut = 1.0 / float(min(20, n))
+    r_mut = 1.0 / float(min(10, n))
     score, chromosome = genetic_algorithm()
     solution = []
     for i in range(r):
