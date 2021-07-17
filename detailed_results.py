@@ -5,6 +5,39 @@ import numpy as np
 import opentest
 
 
+def get_matches(path):
+    matches = 0
+    with open(path, 'r') as f:
+        n = int(f.readline().strip())
+        for _ in range(n):
+            line = f.readline().split(' ')
+            matches.append((line[0]-1, line[1]-1, line[2]-1, line[3]-1))
+
+
+def calculate_distance(matches, r, n, dist, p, slots):
+    ans = 0
+    for (i, j, _, _) in matches:
+        ans += dist[i][j]
+
+
+def calculate_priority(matches, r, n, dist, p, slots):
+    ans = 0
+    for (i, _, _, _) in matches:
+        ans += p[i]
+    return ans
+
+
+def calculate_requests_fullfillment(matches, r, n, dist, p, slots):
+    return len(matches)/r*100
+
+
+def calculate_branch_utilization(macthes, r, n, dist, p, slots):
+    ans = 0
+    for (i, j, _, _) in macthes:
+        ans += slots[rs[i]][j]
+    ans = (ans/n)*100
+
+
 if __name__ == '__main__':
     folderName = sys.argv[1]
     dir_path = folderName+'_output/deatiled_results'
@@ -12,8 +45,11 @@ if __name__ == '__main__':
 
     metrics = ['Branch Utilization', 'Request Satisfaction',
                'Total Distance', 'Total Priority']
-    
-    
+
+    solvers = ['MIP', 'DP', 'Baseline', 'Heuristic']
+
+    methods = [calculate_branch_utilization, calculate_requests_fullfillment,
+               calculate_distance, calculate_priority]
 
     for filename in sorted(os.listdir("./"+folderName), key=lambda x: int(x.split("_")[1].split(".")[0])):
         testnum = int(filename[5:len(filename)-3])
@@ -29,31 +65,30 @@ if __name__ == '__main__':
         rs = np.array(rs, dtype='int64')
         slots = np.array(slots, dtype='int64')
 
+        matches = []
+        for j in range(4):
+            filepath = folderName+'_output/' + \
+                solvers[j]+'/'+filename.replace('in', 'out')
+            matches.append(get_matches(filepath))
+
         n = 0
         for i in range(b):
             n += s[i]*cap[i]
 
-        with open(path, 'r') as f:
-            line = f.readline().split(" ")
-            b = int(line[0])
-            r = int(line[1])
-            d = int(line[3])
-
         print(filename+' Done')
 
-        # new_row = {
-        #     'test_case': testnum,
-        #     'r': r,
-        #     'b': b,
-        #     'd': d,
-        #     'dp_z': dp_z,
-        #     'dp_t': dp_t,
-        #     'mip_z': mip_z,
-        #     'mip_t': mip_t,
-        #     'baseline_z': baseline_z,
-        #     'baseline_t': baseline_t,
-        #     'heuristics_z': heuristics_z,
-        #     'heuristics_t': heuristics_t
-        # }
-        # summary_df = summary_df.append(new_row, ignore_index=True)
-        # summary_df.to_csv(summary_dir, index=False)
+        for i in range(4):
+            res = []
+            for j in range(4):
+                res.append(methods(i)(matches[j], r, n, dist, p, slots))
+
+            new_row = {
+                'metric': metrics[i],
+                'MIP': res[0],
+                'DP': res[1],
+                'Baseline': res[2],
+                'Heuristic': res[3],
+            }
+
+        summary_df = summary_df.append(new_row, ignore_index=True)
+        summary_df.to_csv(summary_dir, index=False)
