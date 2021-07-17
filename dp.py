@@ -18,6 +18,9 @@ d = 0
 ids = []
 cand = []
 
+alpha = 1
+beta = 0
+gamma = 0
 
 def dp(i, mask):
     if i == r:
@@ -31,7 +34,8 @@ def dp(i, mask):
         for k in range(s[j]):
             check = checkValidPlacement(i, mask, j, k, w)
             if check != -1:
-                best = max(best, 1+dp(i+1, mask | check))
+                best = max(best, alpha + beta *
+                           dist[i][j] + gamma*p[i]+dp(i+1, mask | check))
     memo[i][mask] = best
     return best
 
@@ -130,7 +134,6 @@ def solve(path):
     for i in range(len(solution)):
         if(solution[i] != -1):
             (i, takenBranch, startSlot, counter) = solution[i]
-            output +=(str(i) + " " + str(takenBranch) + " " +
-                        str(startSlot) + " " + str(counter) + "\n")
+            output += (str(i) + " " + str(takenBranch) + " " +
+                       str(startSlot) + " " + str(counter) + "\n")
     return output
-
