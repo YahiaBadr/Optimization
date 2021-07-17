@@ -1,0 +1,5 @@
+metric,MIP,DP,Baseline,Heuristic
+Branch Utilization,62.5,62.5,62.5,62.5
+Request Satisfaction,100.0,100.0,100.0,100.0
+Total Distance,4759.989617776374,4764.9639530862705,5499.274136386092,4761.42682786756
+Total Priority,58.0,58.0,58.0,58.0
