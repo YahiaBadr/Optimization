@@ -34,7 +34,7 @@ def dp(i, mask):
         for k in range(s[j]):
             check = checkValidPlacement(i, mask, j, k, w)
             if check != -1:
-                best = max(best, alpha + beta *
+                best = max(best, alpha - beta *
                            dist[i][j] + gamma*p[i]+dp(i+1, mask | check))
     memo[i][mask] = best
     return best
