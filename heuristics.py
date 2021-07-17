@@ -25,9 +25,9 @@ unmap = []
 cand = []
 
 # Number of generations
-n_gen = 100
+n_gen = 50
 # population size
-pop_size = 250
+pop_size = 150
 # crossover rate
 r_cross = 0.9
 # mutation rate (Default Value, will be changed according to input)
@@ -62,6 +62,8 @@ def check_miscarriage(genome):
     taken = [False]*n
     for i in range(r):
         j, w, k = unmap[genome[i]]
+        if k+slots[rs[i]][j] > s[j]:
+            return True
         for k2 in range(k, k+slots[rs[i]][j]):
             if taken[ids[j][w][k2]]:
                 return True
