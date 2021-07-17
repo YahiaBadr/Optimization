@@ -26,7 +26,6 @@ cand = []
 
 # Total iterations
 n_iter = 100
-# bits
 # population size
 n_pop = 100
 # crossover rate
@@ -44,22 +43,33 @@ def objective(chromosome):
     z = 0
     for i in range(r):
         if chromosome[i] != -1:
-            z += 1
+            j = unmap[chromosome[i]][0]
+            z += alpha + beta*dist[i][j] + gamma*p[i]
     return z
 
 # tournament based selection
 
 
-def selection(pop, scores, k=3):
+def selection(pop, scores, k=5):
     selection_ix = randint(len(pop))
     for ix in randint(0, len(pop), k-1):
         if scores[ix] < scores[selection_ix]:
             selection_ix = ix
     return pop[selection_ix]
 
+
+def check_miscarriage(genome):
+    taken = [False]*n
+    for i in range(r):
+        j, w, k = unmap[genome[i]]
+        for k2 in range(k, k+slots[rs[i]][j]):
+            if taken[ids[j][w][k2]]:
+                return True
+            taken[ids[j][w][k2]] = True
+    return False
+
+
 # crossover two parents to create two children
-
-
 def crossover(p1, p2, r_cross):
     # children are copies of parents by default
     c1, c2 = p1.copy(), p2.copy()
@@ -68,8 +78,13 @@ def crossover(p1, p2, r_cross):
         # select crossover point
         pt = randint(1, len(p1)-2)
         # perform crossover
-        c1 = p1[:pt] + p2[pt:]
-        c2 = p2[:pt] + p1[pt:]
+        cand1 = p1[:pt] + p2[pt:]
+        cand2 = p2[:pt] + p1[pt:]
+        # check for miscarriage
+        if not check_miscarriage(cand1):
+            c1 = cand1
+        if not check_miscarriage(cand2):
+            c2 = cand2
     return [c1, c2]
 
 
@@ -228,13 +243,12 @@ if __name__ == '__main__':
         print(filename+' Done')
 
 
-def solve(path): 
+def solve(path):
     matches, solution = HeuristicSolution(path)
-    output= str(matches)+"\n"
+    output = str(matches)+"\n"
     for i in range(len(solution)):
         if(solution[i] != -1):
             (i, takenBranch, startSlot, counter) = solution[i]
-            output+=(str(i) + " " + str(takenBranch) + " " +
-                            str(startSlot) + " " + str(counter) + "\n")
+            output += (str(i) + " " + str(takenBranch) + " " +
+                       str(startSlot) + " " + str(counter) + "\n")
     return output
-    
